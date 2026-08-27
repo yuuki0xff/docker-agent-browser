@@ -13,15 +13,14 @@ ARG AGENT_BROWSER_VERSION
 # If AGENT_BROWSER_VERSION is set, install that exact version.
 RUN npm install -g "agent-browser${AGENT_BROWSER_VERSION:+@$AGENT_BROWSER_VERSION}"
 
-# Install sudo first: agent-browser's --with-deps internally invokes
-# apt-get via sudo, but node:*-slim images do not ship with sudo.
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && apt-get install -y sudo
-
 # Download Chrome and let agent-browser install its required Linux system deps.
 # Using --with-deps avoids maintaining a hand-curated package list.
-RUN agent-browser install --with-deps
+# sudo is installed first because agent-browser internally invokes apt-get via sudo.
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
+    apt-get install -y sudo && \
+    agent-browser install --with-deps
 
 # Keep the container alive so an AI agent can docker exec into it per session.
 CMD ["sleep", "infinity"]
