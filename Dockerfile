@@ -15,7 +15,9 @@ RUN npm install -g "agent-browser${AGENT_BROWSER_VERSION:+@$AGENT_BROWSER_VERSIO
 
 # Install sudo first: agent-browser's --with-deps internally invokes
 # apt-get via sudo, but node:*-slim images do not ship with sudo.
-RUN apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y sudo
 
 # Download Chrome and let agent-browser install its required Linux system deps.
 # Using --with-deps avoids maintaining a hand-curated package list.
