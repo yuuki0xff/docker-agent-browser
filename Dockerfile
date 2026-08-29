@@ -22,5 +22,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get install -y sudo && \
     agent-browser install --with-deps
 
+# The upstream Node image sets an entrypoint helper that we do not need.
+# Clear it so CMD runs directly without docker-entrypoint.sh interference.
+ENTRYPOINT []
+
 # Keep the container alive so an AI agent can docker exec into it per session.
 CMD ["sleep", "infinity"]
