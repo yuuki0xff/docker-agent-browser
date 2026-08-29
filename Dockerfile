@@ -16,10 +16,18 @@ RUN npm install -g "agent-browser${AGENT_BROWSER_VERSION:+@$AGENT_BROWSER_VERSIO
 # Download Chrome and let agent-browser install its required Linux system deps.
 # Using --with-deps avoids maintaining a hand-curated package list.
 # sudo is installed first because agent-browser internally invokes apt-get via sudo.
+# Extra packages below enable WebGPU support in Linux containers:
+#   - libvulkan1, mesa-vulkan-drivers: SwiftShader Vulkan ICD for GPU-less rendering
+#   - xvfb, xauth: virtual display for --headed screenshot capture on displayless hosts
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
-    apt-get install -y sudo && \
+    apt-get install -y sudo \
+        ca-certificates \
+        libvulkan1 \
+        mesa-vulkan-drivers \
+        xvfb \
+        xauth && \
     agent-browser install --with-deps
 
 # The upstream Node image sets an entrypoint helper that we do not need.
