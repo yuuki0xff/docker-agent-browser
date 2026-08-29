@@ -16,7 +16,8 @@ RUN npm install -g "agent-browser${AGENT_BROWSER_VERSION:+@$AGENT_BROWSER_VERSIO
 # Download Chrome and let agent-browser install its required Linux system deps.
 # Using --with-deps avoids maintaining a hand-curated package list.
 # sudo is installed first because agent-browser internally invokes apt-get via sudo.
-# Extra packages below enable WebGPU support in Linux containers:
+# Extra packages below enable WebGPU support in Linux containers.
+# Based on: https://github.com/vercel-labs/agent-browser/blob/v0.35.1/docs/src/app/webgpu/page.mdx
 #   - libvulkan1, mesa-vulkan-drivers: SwiftShader Vulkan ICD for GPU-less rendering
 #   - xvfb, xauth: virtual display for --headed screenshot capture on displayless hosts
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
